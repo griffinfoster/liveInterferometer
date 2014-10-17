@@ -4,10 +4,11 @@ liveInterferometer
 #README Document for the webcam interactive interferometer
 -----------------------------------------------------------------
 Created: 26.2.14
-Updated: 26.2.14
+Updated: 17.10.14
 
-Required Equipment:
+##Required Equipment
 1. extrenal USB webcam
+2. computer running Ubuntu 12.04+
 
 In the circle detection script mode you require
 a. coins or small round objects
@@ -15,16 +16,15 @@ b. flat, light colored area (A3 or A2 paper)
 
 In the edge detection mode you can draw the stations on a piece of white paper using a black marker
 
-
+##Required Software
+1. numpy
+2. opencv
 
 Software:
 python script: gen_psf_interferometer_detect_skyim.py
 test sky image: such as astro_test_image.jpg
 
-The code is in the directory: /home/griffin/Downloads/interactiveInterferometer
-
 ##To Run:
------------------------------------------------------------------
 1. before plugging in the webcam, run:
 
     ls /dev/video*
@@ -43,7 +43,6 @@ To run the script with the webcam ID and test sky image: python gen_psf_interfer
 
 
 ##Changing Settings:
------------------------------------------------------------------
 A few parameters can be altered.
 
 A Gaussian funstion is applied to the PSF, this can be disabled by commenting out the line:
@@ -57,7 +56,7 @@ To change the size of the Gaussian function change the last two number in the li
 The circles are detected using the cv2.HoughCircles() function, it takes a number of parameters which are documented in the code and on the opencv webpage.
 Interferometer Live Demo Using Open CV image detection
 
-#Edge Detection
+##Edge Detection
 
 The code can also be run in edge detection mode.
 
