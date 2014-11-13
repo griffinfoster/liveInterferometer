@@ -4,7 +4,7 @@ liveInterferometer
 #README Document for the webcam interactive interferometer
 -----------------------------------------------------------------
 Created: 26.2.14
-Updated: 17.10.14
+Updated: 13.11.14
 
 ##Required Equipment
 1. extrenal USB webcam
@@ -39,7 +39,7 @@ A new video device should appear, remember the ID number as this will be used in
 
 For script help run: python gen_psf_interferometer_detect_skyim.py -h
 
-To run the script with the webcam ID and test sky image: python gen_psf_interferometer_detect_skyim.py -c 1 -i /home/griffin/Downloads/interactiveInterferometer/astro_test_image.jpg
+To run the script with the webcam ID and test sky image: python gen_psf_interferometer_detect_skyim.py -c 1 -i testImages/astro_test_image.jpg
 
 
 ##Changing Settings:
