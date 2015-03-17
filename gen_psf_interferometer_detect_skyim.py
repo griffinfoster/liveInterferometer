@@ -5,10 +5,11 @@ Interferometer/PSF simulator
 Created by: Jack Hickish
 Minor Modifications by: Griffin Foster
 
-TODO: add color
-TODO: adjust detection paramters
+TODO: add color to observed image
+TODO: adaptive filter cirlces' minimum distance
+TODO: contrast for better edge detection
 TODO: add freeze/unfreeze command
-TODO: add rotation command
+TODO: add Gaussian to image rather than PSF
 """
 
 import cv2 #for ubuntu 12.04 install see: http://karytech.blogspot.com/2012/05/opencv-24-on-ubuntu-1204.html
@@ -25,7 +26,7 @@ def cvfast_conv(image,psf):
     imagePad[:image.shape[0],:image.shape[1]]=image
 
     imageDirty=np.fft.irfft2(np.fft.rfft2(imagePad) * np.fft.rfft2(psf, imagePad.shape))
-    print image.shape, psf.shape, n,m
+    #print image.shape, psf.shape, n,m
     return imageDirty[psf.shape[0]/2:image.shape[0]+psf.shape[0]/2,psf.shape[1]/2:image.shape[1]+psf.shape[1]/2]
     #return imagePad
 
@@ -113,10 +114,12 @@ while(True):
     layout_img = cv.QueryFrame(cam0)
 
     layout_img_grey = cv.CreateImage((layout_img.width,layout_img.height),layout_img.depth,1)
-    cv.CvtColor(layout_img,layout_img_grey,cv.CV_BGR2GRAY)
+    cimg=cv.CvtColor(layout_img,layout_img_grey,cv.CV_BGR2GRAY)
     layout_img_grey_arr = cv2array(layout_img_grey)
+    #cv2.threshold(layout_img_grey_arr,127,255,cv2.THRESH_TRUNC)
 
     station_locs = np.zeros([ysize/RESCALE_FACTOR,xsize/RESCALE_FACTOR])
+    layout_img_grey_arr = cv2.medianBlur(layout_img_grey_arr,5) #blur to remove noise
     #cv2.HoughCircles(image, method, dp, minDist, circles, param1, param2, minRadius, maxRadius)
     #   image: input webcam image size
     #   method: only cv.CV_HOUGH_GRADIENT exists
@@ -127,17 +130,16 @@ while(True):
     #   param2: The smaller it is, the more false circles may be detected.
     #   minRadius: Minimum circle radius
     #   maxRadius: Maximum circle radius
-    circles = cv2.HoughCircles(layout_img_grey_arr, cv.CV_HOUGH_GRADIENT,2,10,None,100,35,5,30)
+    circles = cv2.HoughCircles(layout_img_grey_arr,cv.CV_HOUGH_GRADIENT,2,20,None,100,35,5,30)
     if circles is not None:
         for cn,circle in enumerate(circles[0]):
-            x,y = circle[1],circle[0]
-            print "we have circle at %d,%d"%(x,y)
+            x,y,rad = circle[1],circle[0],circle[2]
+            #print "we have circle at %d,%d,%d"%(x,y,rad)
             try:
-                layout_img_grey_arr[x-5:x+5,y-5:y+5]=255
+                cv2.circle(layout_img_grey_arr,(y,x),rad,255,2)
             except:
                 pass
             station_locs[x/RESCALE_FACTOR,y/RESCALE_FACTOR]=1
-
 
     psf = np.fft.fftshift(np.abs(np.fft.fft2(station_locs,s=[ysize,xsize]))**2)
     #psf=psf[(ysize/2)-64:(ysize/2)+64,(xsize/2)-64:(xsize/2)+64] #only select the central region of the PSF
@@ -148,17 +150,19 @@ while(True):
 
     #target_arr = target_img_grey[:,:]
     #dirty_arr = cvfast_conv(target_arr,psf)
+    
     dirty_arr = cvfast_conv(target_img_lying,psf)
     
     dirty_arr /= dirty_arr.max()
     dirty_img = array2cv(dirty_arr)
 
     cv.ShowImage("Antenna Layout",array2cv(layout_img_grey_arr))
-    cv.ShowImage("Target Image",array2cv(target_img_lying))
+    #cv.ShowImage("Target Image",array2cv(target_img_lying))
+    cv.ShowImage("Target Image",array2cv(target_image))
     cv.ShowImage("Point Spread",psf_img)
     cv.ShowImage("Observed Image",dirty_img)
 
-    if cv.WaitKey(50)!=-1:
+    if cv.WaitKey(250)!=-1: #decreasing this will increase the frame rate
         break
 
 cv.DestroyAllWindows()
