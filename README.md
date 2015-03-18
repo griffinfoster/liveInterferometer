@@ -36,19 +36,15 @@ OpenCV is used for image detection. There is no nice Ubuntu package for it, thus
 
 download opencv 2.4.10 source, and run the following:
 
-<code>unzip opencv-2.4.10.zip</code>
-
-<code>cd opencv-2.4.10</code>
-
-<code>mkdir release</code>
-
-<code>cd release</code>
-
-<code>cmake -D CMAKE_BUILD_TYPE=RELEASE -D CMAKE_INSTALL_PREFIX=/usr/local ..</code>
-
-<code>make</code>
-
-<code>sudo make install</code>
+```
+unzip opencv-2.4.10.zip
+cd opencv-2.4.10
+mkdir release
+cd release
+cmake -D CMAKE_BUILD_TYPE=RELEASE -D CMAKE_INSTALL_PREFIX=/usr/local ..
+make
+sudo make install
+```
 
 ##To Run:
 1. before plugging in the webcam, run:
