@@ -28,31 +28,19 @@ test sky image: such as astro_test_image.jpg
 
 OpenCV is used for image detection. There is no nice Ubuntu package for it, thus it must be installed from source. The code has been tested on Ubuntu 12.04 and 14.04 using OpenCV 2.4.10.
 
-<code>
-[compiler] sudo apt-get install build-essential
-
-[required] sudo apt-get install cmake git libgtk2.0-dev pkg-config libavcodec-dev libavformat-dev libswscale-dev
-
-[optional] sudo apt-get install python-dev python-numpy libtbb2 libtbb-dev libjpeg-dev libpng-dev libtiff-dev libjasper-dev libdc1394-22-dev
-</code>
+<code>[compiler] sudo apt-get install build-essential</code>
+<code>[required] sudo apt-get install cmake git libgtk2.0-dev pkg-config libavcodec-dev libavformat-dev libswscale-dev</code>
+<code>[optional] sudo apt-get install python-dev python-numpy libtbb2 libtbb-dev libjpeg-dev libpng-dev libtiff-dev libjasper-dev libdc1394-22-dev</code>
 
 download opencv 2.4.10 source, and run the following:
 
-<code>
-unzip opencv-2.4.10.zip
-
-cd opencv-2.4.10
-
-mksir release
-
-cd release
-
-cmake -D CMAKE_BUILD_TYPE=RELEASE -D CMAKE_INSTALL_PREFIX=/usr/local ..
-
-make
-
-sudo make install
-</code>
+<code>unzip opencv-2.4.10.zip</code>
+<code>cd opencv-2.4.10</code>
+<code>mkdir release</code>
+<code>cd release</code>
+<code>cmake -D CMAKE_BUILD_TYPE=RELEASE -D CMAKE_INSTALL_PREFIX=/usr/local ..</code>
+<code>make</code>
+<code>sudo make install</code>
 
 ##To Run:
 1. before plugging in the webcam, run:
