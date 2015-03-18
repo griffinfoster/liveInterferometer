@@ -88,7 +88,7 @@ cv.NamedWindow("Observed Image", cv.CV_WINDOW_AUTOSIZE)
 cam0 = cv.CaptureFromCAM(CAMERA_DEVICE_INDEX)
 
 if opts.input is None:
-    target_image = cv2.imread('/home/griffin/Downloads/interactiveInterferometer/astro_test_image.jpg')
+    target_image = cv2.imread('testImages/astro_test_image.jpg')
 else:
     target_image=cv2.imread(opts.input)
 target_img_grey = cv2.cvtColor(target_image,cv2.cv.CV_BGR2GRAY)
@@ -101,10 +101,10 @@ RESCALE_FACTOR=opts.res #decrease to change the effective resolution
 ysize=480
 xsize=640
 
-#make a 2D Gaussian to modulate the PSF with
+#make a 2D Gaussian to modulate the PSF with (this is kind of the primary beam)
 def gauss2d(x0,y0,amp,stdx,stdy):
     return lambda x,y: amp*np.exp(-1.*( (((x-x0)**2.)/(2*stdx**2.)) + (((y-y0)**2.)/(2*stdy**2.)) ))
-gaussFunc=gauss2d(0.,0.,1.,30.,30.)
+gaussFunc=gauss2d(0.,0.,1.,45.,45.)
 xx = np.arange(xsize)-(xsize/2)
 yy = np.arange(ysize)-(ysize/2)
 xv, yv = np.meshgrid(xx, yy)
@@ -112,6 +112,7 @@ gaussGrid=gaussFunc(xv,yv)
 
 while(True):
     layout_img = cv.QueryFrame(cam0)
+    layout_img_arr = cv2array(layout_img)
 
     layout_img_grey = cv.CreateImage((layout_img.width,layout_img.height),layout_img.depth,1)
     cimg=cv.CvtColor(layout_img,layout_img_grey,cv.CV_BGR2GRAY)
@@ -130,33 +131,43 @@ while(True):
     #   param2: The smaller it is, the more false circles may be detected.
     #   minRadius: Minimum circle radius
     #   maxRadius: Maximum circle radius
-    circles = cv2.HoughCircles(layout_img_grey_arr,cv.CV_HOUGH_GRADIENT,2,20,None,100,35,5,30)
+    circles = cv2.HoughCircles(layout_img_grey_arr,cv.CV_HOUGH_GRADIENT,2,20,None,100,35,7,32)
     if circles is not None:
         for cn,circle in enumerate(circles[0]):
             x,y,rad = circle[1],circle[0],circle[2]
             #print "we have circle at %d,%d,%d"%(x,y,rad)
             try:
-                cv2.circle(layout_img_grey_arr,(y,x),rad,255,2)
+                #cv2.circle(layout_img_grey_arr,(y,x),rad,255,2)
+                cv2.circle(layout_img_arr,(y,x),rad,(0,255,0),2)
             except:
                 pass
             station_locs[x/RESCALE_FACTOR,y/RESCALE_FACTOR]=1
 
     psf = np.fft.fftshift(np.abs(np.fft.fft2(station_locs,s=[ysize,xsize]))**2)
     #psf=psf[(ysize/2)-64:(ysize/2)+64,(xsize/2)-64:(xsize/2)+64] #only select the central region of the PSF
-    psf /= psf.max()
+    #psf /= psf.max()
     psf=psf*gaussGrid #apply a Gaussian taper to the PSF
+    psf/=np.sum(psf)
 
-    psf_img = array2cv(psf)
+    psf_img = array2cv(psf/psf.max())
 
-    #target_arr = target_img_grey[:,:]
-    #dirty_arr = cvfast_conv(target_arr,psf)
+    target_arr = target_img_grey[:,:]
+    dirty_arr = cvfast_conv(target_arr,psf)
     
-    dirty_arr = cvfast_conv(target_img_lying,psf)
+    #dirty_arr = cvfast_conv(target_img_lying,psf)
+    #dirty_arr0 = cvfast_conv(target_image[:,:,0],psf)
+    #dirty_arr1 = cvfast_conv(target_image[:,:,1],psf)
+    #dirty_arr2 = cvfast_conv(target_image[:,:,2],psf)
+    #dirty_arr=np.zeros_like(target_image)
+    #dirty_arr[:,:,0]=dirty_arr0
+    #dirty_arr[:,:,1]=dirty_arr1
+    #dirty_arr[:,:,2]=dirty_arr2
     
     dirty_arr /= dirty_arr.max()
     dirty_img = array2cv(dirty_arr)
 
-    cv.ShowImage("Antenna Layout",array2cv(layout_img_grey_arr))
+    #cv.ShowImage("Antenna Layout",array2cv(layout_img_grey_arr))
+    cv.ShowImage("Antenna Layout",array2cv(layout_img_arr))
     #cv.ShowImage("Target Image",array2cv(target_img_lying))
     cv.ShowImage("Target Image",array2cv(target_image))
     cv.ShowImage("Point Spread",psf_img)
