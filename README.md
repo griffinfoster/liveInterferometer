@@ -28,11 +28,11 @@ test sky image: such as astro_test_image.jpg
 
 OpenCV is used for image detection. There is no nice Ubuntu package for it, thus it must be installed from source. The code has been tested on Ubuntu 12.04 and 14.04 using OpenCV 2.4.10.
 
-<code>[compiler] sudo apt-get install build-essential</code>
-
-<code>[required] sudo apt-get install cmake git libgtk2.0-dev pkg-config libavcodec-dev libavformat-dev libswscale-dev</code>
-
-<code>[optional] sudo apt-get install python-dev python-numpy libtbb2 libtbb-dev libjpeg-dev libpng-dev libtiff-dev libjasper-dev libdc1394-22-dev</code>
+```
+[compiler] sudo apt-get install build-essential
+[required] sudo apt-get install cmake git libgtk2.0-dev pkg-config libavcodec-dev libavformat-dev libswscale-dev
+[optional] sudo apt-get install python-dev python-numpy libtbb2 libtbb-dev libjpeg-dev libpng-dev libtiff-dev libjasper-dev libdc1394-22-dev
+```
 
 download opencv 2.4.10 source, and run the following:
 
