@@ -30,7 +30,9 @@ OpenCV is used for image detection. There is no nice Ubuntu package for it, thus
 
 <code>
 [compiler] sudo apt-get install build-essential
+
 [required] sudo apt-get install cmake git libgtk2.0-dev pkg-config libavcodec-dev libavformat-dev libswscale-dev
+
 [optional] sudo apt-get install python-dev python-numpy libtbb2 libtbb-dev libjpeg-dev libpng-dev libtiff-dev libjasper-dev libdc1394-22-dev
 </code>
 
@@ -38,11 +40,17 @@ download opencv 2.4.10 source, and run the following:
 
 <code>
 unzip opencv-2.4.10.zip
+
 cd opencv-2.4.10
+
 mksir release
+
 cd release
+
 cmake -D CMAKE_BUILD_TYPE=RELEASE -D CMAKE_INSTALL_PREFIX=/usr/local ..
+
 make
+
 sudo make install
 </code>
 
@@ -78,7 +86,7 @@ To change the size of the Gaussian function change the last two number in the li
 The circles are detected using the cv2.HoughCircles() function, it takes a number of parameters which are documented in the code and on the opencv webpage.
 Interferometer Live Demo Using Open CV image detection
 
-##Edge Detection
+##Edge Detection:
 
 The code can also be run in edge detection mode.
 
